@@ -1,6 +1,6 @@
 const doctors = {
-  amitsharma: {
-    name: "Dr. Amit Sharma",
+  mukundagrawal: {
+    name: "Dr. Mukund Agrawal",
     links: {
       Nagpur: "https://g.page/r/CfKOK0J3yq2vEBE/review",
       Itarsi: "https://g.page/r/CWUODJ90WG1rEBE/review",
