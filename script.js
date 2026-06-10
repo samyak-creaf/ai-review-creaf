@@ -34,8 +34,7 @@ let currentDoctor = null;
 
 window.onload = function () {
 
-  const params = new URLSearchParams(window.location.search);
-  const doctorId = params.get("doctor");
+  const doctorId = window.location.pathname.substring(1);
 
   if (doctorId && doctors[doctorId]) {
 
