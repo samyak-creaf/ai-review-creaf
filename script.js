@@ -113,11 +113,21 @@ async function generateReview() {
 
     const result = await response.json();
 
-    if (!result || !result.review) {
-      alert("Server error. Please try again.");
-      console.log(result);
-      return;
-    }
+    if (!result.review) {
+
+  if (result.details?.error?.code === 429) {
+    alert("AI service is busy. Please wait 1 minute and try again.");
+  } 
+  else if (result.details?.error?.code === 503) {
+    alert("AI service is temporarily unavailable. Please try again shortly.");
+  }
+  else {
+    alert("Unable to generate review. Please try again.");
+  }
+
+  console.log(result);
+  return;
+}
 
     await displayReviews(result.review);
 
