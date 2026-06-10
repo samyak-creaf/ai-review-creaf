@@ -5,70 +5,87 @@
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
 
 <div class="wrapper">
   <div class="card">
+    
     <h1>✨ AI Review Assistant</h1>
 
     <div class="form-group">
-      <input type="text" id="doctor" value="Dr. Mukund Agrawal">
+
+      <!-- Doctor will be set automatically from URL -->
+      <input 
+        type="text" 
+        id="doctor" 
+        placeholder="Doctor Name"
+        readonly
+      >
+
+      <!-- Locations will be added dynamically -->
       <select id="location">
-  <option value="Nagpur">Nagpur</option>
-  <option value="Itarsi">Itarsi</option>
-  <option value="Betul">Betul</option>
-</select>
+      </select>
 
-      <input type="text" id="treatment" placeholder="Treatment">
+      <input 
+        type="text" 
+        id="treatment" 
+        placeholder="Treatment"
+      >
+
     </div>
 
-    
 
+    <!-- Review quality -->
     <div class="row">
+
       <select id="comment">
-        <option>Excellent</option>
-        <option>Good</option>
-        <option>Bad</option>
+        <option value="Excellent">Excellent</option>
+        <option value="Very Good">Very Good</option>
+        <option value="Good">Good</option>
+        <option value="Satisfactory">Satisfactory</option>
+        <option value="Bad">Bad</option>
       </select>
 
-      
     </div>
 
+
+    <!-- Review settings -->
     <div class="row">
+
       <select id="length">
-        <option value="short">Short</option>
-        <option value="medium">Medium</option>
-        <option value="long">Long</option>
+        <option value="short">Short Review</option>
+        <option value="medium" selected>Medium Review</option>
+        <option value="long">Long Review</option>
       </select>
+
 
       <select id="language">
-  <option value="English">English</option>
-  <option value="Hindi">Hindi</option>
-  <option value="Marathi">Marathi</option>
-</select>
+        <option value="English">English</option>
+        <option value="Hindi">Hindi</option>
+        <option value="Marathi">Marathi</option>
+      </select>
 
     </div>
+
 
     <button class="generate-btn" onclick="generateReview()">
       Generate Review
     </button>
+
+
     <div id="loading" class="loading hidden">
-    🤖 AI is writing your review...
+      🤖 AI is writing your review...
     </div>
+
 
     <div id="reviews" class="reviews-container"></div>
 
   </div>
 </div>
 
+
 <script src="script.js"></script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
