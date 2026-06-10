@@ -1,3 +1,69 @@
+const doctors = {
+  amitsharma: {
+    name: "Dr. Amit Sharma",
+    links: {
+      Nagpur: "https://g.page/r/CfKOK0J3yq2vEBE/review",
+      Itarsi: "https://g.page/r/CWUODJ90WG1rEBE/review",
+      Betul: "https://g.page/r/CQMT68pfmtDcEBI/review"
+    }
+  },
+
+  ibocc: {
+    name: "i-BOCC Cancer Center",
+    links: {
+      Sambhajinagar: "https://g.page/r/CTjDCglmbMSQEAE/review"
+    }
+  },
+
+  abhishekbhalotia: {
+    name: "Dr. Abhishek Bhalotia",
+    links: {
+      Gondia: "https://g.page/r/CbQZZElmOXyTEAE/review"
+    }
+  },
+
+  vishalchandak: {
+    name: "Dr. Vishal Chandak",
+    links: {
+      Sambhajinagar: "https://g.page/r/CXFIHvG3sWhIEAE/review"
+    }
+  }
+};
+
+let currentDoctor = null;
+
+window.onload = function () {
+
+  const params = new URLSearchParams(window.location.search);
+  const doctorId = params.get("doctor");
+
+  if (doctorId && doctors[doctorId]) {
+
+    currentDoctor = doctors[doctorId];
+
+    // Set doctor name
+    document.getElementById("doctor").value = currentDoctor.name;
+
+    // Get location dropdown
+    const locationDropdown = document.getElementById("location");
+
+    // Clear existing locations
+    locationDropdown.innerHTML = "";
+
+    // Add only locations available for this doctor
+    Object.keys(currentDoctor.links).forEach(location => {
+      const option = document.createElement("option");
+      option.value = location;
+      option.textContent = location;
+      locationDropdown.appendChild(option);
+    });
+
+  } else {
+
+    alert("Invalid doctor QR code or link.");
+
+  }
+};
 /* ================= GLOBAL VARIABLES ================= */
 
 let lastReviews = [];
@@ -149,18 +215,17 @@ function copyText(text) {
 function postGoogle() {
   const location = document.getElementById("location").value;
 
-  const branchLinks = {
-    Nagpur: "https://g.page/r/CfKOK0J3yq2vEBE/review",
-    Itarsi: "https://g.page/r/CWUODJ90WG1rEBE/review",
-    Betul: "https://g.page/r/CQMT68pfmtDcEBI/review"
-  };
+  if (!currentDoctor) {
+    alert("Doctor not found.");
+    return;
+  }
 
-  const redirectUrl = branchLinks[location];
+  const reviewLink = currentDoctor.links[location];
 
-  if (redirectUrl) {
-    window.open(redirectUrl, "_blank");
+  if (reviewLink) {
+    window.open(reviewLink, "_blank");
   } else {
-    alert("Branch link not found for this location.");
+    alert("Review link not available for this location.");
   }
 }
 
