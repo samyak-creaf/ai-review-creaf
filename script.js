@@ -103,7 +103,7 @@ async function generateReview() {
   try {
     loading.classList.remove("hidden");
 
-    const response = await fetch("/.netlify/functions/generate-review", {
+    const response = await fetch("/.netlify/functions/creaf-reviews", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
