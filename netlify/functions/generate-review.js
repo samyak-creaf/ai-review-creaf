@@ -10,21 +10,22 @@ exports.handler = async (event) => {
 
     const selectedLength = lengthMap[data.length] || "60 to 90 words";
 
-    // 1. Check if the key is missing before calling Google
     if (!process.env.GEMINI_API_KEY) {
-      console.error("CRITICAL ERROR: GEMINI_API_KEY is not defined in Netlify Environment Variables!");
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Server Configuration Error: API Key missing." })
+        body: JSON.stringify({ error: "Configuration Error: GEMINI_API_KEY is missing." })
       };
     }
 
-    // 2. Switched endpoint to v1beta and model to gemini-2.5-flash for maximum stability
+    // Pass the API key securely via the x-goog-api-key header
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "x-goog-api-key": process.env.GEMINI_API_KEY
+        },
         body: JSON.stringify({
           contents: [
             {
@@ -64,12 +65,18 @@ Formatting Rules:
 
     const result = await response.json();
 
-    // 3. Log the response to the Netlify Functions tab so we can inspect errors
-    if (!result.candidates) {
-      console.error("Google Gemini API rejected request. Full Response:", JSON.stringify(result));
+    // Catch raw API errors returned directly from Google
+    if (result.error) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Gemini API failed", details: result })
+        body: JSON.stringify({ error: "Gemini API rejected request", details: result.error })
+      };
+    }
+
+    if (!result.candidates || result.candidates.length === 0) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Gemini API structure failed", details: result })
       };
     }
 
@@ -84,11 +91,10 @@ Formatting Rules:
     };
 
   } catch (err) {
-    console.error("Server catch-block caught an error:", err.message);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: "Server error",
+        error: "Server internal breakdown",
         details: err.message
       })
     };
