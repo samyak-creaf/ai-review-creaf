@@ -10,8 +10,18 @@ exports.handler = async (event) => {
 
     const selectedLength = lengthMap[data.length] || "60 to 90 words";
 
+    // 1. Check if the key is missing before calling Google
+    if (!process.env.GEMINI_API_KEY) {
+      console.error("CRITICAL ERROR: GEMINI_API_KEY is not defined in Netlify Environment Variables!");
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Server Configuration Error: API Key missing." })
+      };
+    }
+
+    // 2. Switched endpoint to v1beta and model to gemini-2.5-flash for maximum stability
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23,12 +33,12 @@ exports.handler = async (event) => {
                   text: `
 Generate exactly 3 completely different Google reviews.
 
-Doctor: ${data.doctor}
-Location: ${data.location}
-Treatment: ${data.treatment}
-Comments: ${data.comment}
+Doctor: ${data.doctor || 'a professional'}
+Location: ${data.location || 'the clinic'}
+Treatment: ${data.treatment || 'the service'}
+Comments: ${data.comment || ''}
 
-Language: Write the review completely in ${data.language}.
+Language: Write the review completely in ${data.language || 'English'}.
 
 Length requirement:
 Each review must be ${selectedLength}.
@@ -54,7 +64,9 @@ Formatting Rules:
 
     const result = await response.json();
 
+    // 3. Log the response to the Netlify Functions tab so we can inspect errors
     if (!result.candidates) {
+      console.error("Google Gemini API rejected request. Full Response:", JSON.stringify(result));
       return {
         statusCode: 500,
         body: JSON.stringify({ error: "Gemini API failed", details: result })
@@ -63,12 +75,16 @@ Formatting Rules:
 
     return {
       statusCode: 200,
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         review: result.candidates[0].content.parts[0].text
       })
     };
 
   } catch (err) {
+    console.error("Server catch-block caught an error:", err.message);
     return {
       statusCode: 500,
       body: JSON.stringify({
