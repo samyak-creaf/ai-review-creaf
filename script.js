@@ -22,6 +22,13 @@ const doctors = {
     }
   },
 
+  vrundavannicu: {
+    name: "Vrundavan Newborn & Childcare Centre",
+    links: {
+      Sambhajinagar: "https://g.page/r/CXLjuiW6fGkOEBM/review"
+    }
+  },
+
   vishalchandak: {
     name: "Dr. Vishal Chandak",
     links: {
