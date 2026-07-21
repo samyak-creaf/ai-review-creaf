@@ -29,6 +29,20 @@ const doctors = {
     }
   },
 
+  shraddhachandak: {
+    name: "Dr. Shraddha Chandak – Pediatric Hemato-Oncologist & Immunologist",
+    links: {
+      Sambhajinagar: "https://g.page/r/CUAA2zraXV8rEBM/review"
+    }
+  },
+
+  hkf: {
+    name: "Happy Kids Foundation",
+    links: {
+      Sambhajinagar: "https://g.page/r/Cc92H6Co_6EmEBM/review"
+    }
+  },
+
   vishalchandak: {
     name: "Dr. Vishal Chandak",
     links: {
