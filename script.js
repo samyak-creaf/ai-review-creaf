@@ -7,6 +7,12 @@ const doctors = {
       Betul: "https://g.page/r/CQMT68pfmtDcEBI/review"
     }
   },
+   kapilkurtadikar : {
+    name: "Jagdamb Dental Clinic and Implant Centre",
+    links: {
+      Nanded: "https://g.page/r/CT8ooD5jLEn-EBM/review"
+    }
+  },
 
   ibocc: {
     name: "i-BOCC Cancer Center",
