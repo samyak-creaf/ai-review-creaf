@@ -108,7 +108,7 @@ async function generateReview() {
   const doctor = document.getElementById("doctor").value.trim();
   const location = document.getElementById("location").value;
   const treatment = document.getElementById("treatment").value.trim();
-  const comment = document.getElementById("comment").value;
+  const comment = document.getElementById("comment").value.trim();
   const length = document.getElementById("length").value;
   const language = document.getElementById("language").value;
   const loading = document.getElementById("loading");
@@ -120,7 +120,9 @@ async function generateReview() {
 
   const payload = {
     doctor,
+    clinic: doctor,
     location,
+    city: location,
     treatment,
     comment,
     length,
@@ -138,29 +140,48 @@ async function generateReview() {
       body: JSON.stringify(payload)
     });
 
-    const result = await response.json();
+    const rawResponse = await response.text();
+    let result;
 
-    if (!result.review) {
+    try {
+      result = JSON.parse(rawResponse);
+    } catch {
+      throw new Error(
+        response.status === 503
+          ? "The review service is temporarily unavailable. Please try again in a minute."
+          : "The server returned an unexpected response."
+      );
+    }
 
-  if (result.details?.error?.code === 429) {
-    alert("AI service is busy. Please wait 1 minute and try again.");
-  } 
-  else if (result.details?.error?.code === 503) {
-    alert("AI service is temporarily unavailable. Please try again shortly.");
-  }
-  else {
-    alert("Unable to generate review. Please try again.");
-  }
+    if (!response.ok || !result.review) {
+      console.error("Review API error:", result);
 
-  console.log(result);
-  return;
-}
+      const providerCode =
+        result.details?.code ||
+        result.details?.error?.code ||
+        result.providerStatus ||
+        response.status;
+
+      if (providerCode === 429) {
+        throw new Error("AI service is busy. Please wait a minute and try again.");
+      }
+
+      if (providerCode === 503) {
+        throw new Error("AI service is temporarily unavailable. Please try again shortly.");
+      }
+
+      throw new Error(
+        result.details?.message ||
+        result.error ||
+        "Unable to generate review. Please try again."
+      );
+    }
 
     await displayReviews(result.review);
 
   } catch (error) {
-    console.error(error);
-    alert("Error generating review.");
+    console.error("Review generation failed:", error);
+    alert(error.message || "Unable to generate review. Please try again.");
   } finally {
     loading.classList.add("hidden");
   }
@@ -168,33 +189,19 @@ async function generateReview() {
 
 /* ================= DISPLAY REVIEWS ================= */
 
-async function displayReviews(textBlock) {
+async function displayReviews(reviewText) {
   const reviewsContainer = document.getElementById("reviews");
+  const review = reviewText.trim();
+
   reviewsContainer.innerHTML = "";
 
-  const reviewList = textBlock
-    .split(/\n\s*\n/)
-    .map(r => r.trim())
-    .filter(r => r.length > 20);
-
-  let uniqueReviews = [];
-
-  reviewList.forEach(review => {
-    if (!isDuplicate(review) && !isTooSimilar(review, uniqueReviews)) {
-      uniqueReviews.push(review);
-      lastReviews.push(review);
-    }
-  });
-
-  if (uniqueReviews.length === 0) {
-    alert("Duplicate detected. Regenerating...");
-    generateReview();
+  if (review.length < 20) {
+    alert("The generated review was too short. Please try again.");
     return;
   }
 
-  for (let review of uniqueReviews) {
-    await typeReview(review, reviewsContainer);
-  }
+  lastReviews.push(review);
+  await typeReview(review, reviewsContainer);
 }
 
 /* ================= TYPING ANIMATION ================= */
