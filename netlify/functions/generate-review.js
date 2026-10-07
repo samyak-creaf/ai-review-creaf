@@ -3,7 +3,7 @@ exports.handler = async (event) => {
     const data = event.body ? JSON.parse(event.body) : {};
 
     const lengthMap = {
-      short: "40 to 60 words",
+      short: "20 to 40 words",
       medium: "60 to 90 words",
       long: "100 to 140 words"
     };
@@ -45,15 +45,9 @@ Length requirement:
 Each review must be ${selectedLength}.
 
 Formatting Rules:
-- Number each review as 1., 2., and 3.
-- Separate each review with two line breaks.
-- Natural, human tone
-- Simple language
-- Mention the location only once per review
-- No emojis, hashtags, prices, or phone numbers
-- No medical guarantees
-- Write like a real person sharing experience
-- Do not repeat sentences across reviews
+Write one natural, first-person review as if the patient is sharing their own experience.
+Use simple, human language and keep it personal. Include the doctor’s name, clinic name, relevant treatment keyword, SEO keywords naturally, and city. Mention the location only once.
+Do not use numbered lists, multiple reviews, emojis, hashtags, prices, phone numbers, medical guarantees, or third-person wording. Avoid repetitive phrasing and make every review feel unique.
 `
                 }
               ]
